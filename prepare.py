@@ -1,4 +1,5 @@
-
+import pandas as pd 
+from sklearn.preprocessing import LabelEncoder, OneHotEncoder, MinMaxScaler
 from sklearn.model_selection import train_test_split
 
 # ----------------------- #
@@ -14,6 +15,7 @@ def create_tenure_year(df):
     df["tenure_years"] = df.tenure/12
     df.tenure_years = df.tenure_years.astype(int)
     return df
+    
 def is_churn(df):
     df['is_churn'] = (df.churn == "Yes")
     return df
@@ -108,4 +110,86 @@ def encode_new_columns(df):
 
     df["online_features"] = df.apply(lambda row: online_features(row), axis = 1)
     return df
+
+# ---------------------- #
+#         Scaling        #
+# ---------------------- #
+
+
+def split_my_df(df):
+    train, test = train_test_split(df, train_size=.8, random_state=123)
+    return train, test
+
+# Helper function used to updated the scaled arrays and transform them into usable dataframes
+def return_values(scaler, train, validate, test):
+        train_scaled = pd.DataFrame(scaler.transform(train), columns=train.columns.values).set_index([train.index.values])
+        validate_scaled = pd.DataFrame(scaler.transform(validate), columns=validate.columns.values).set_index([validate.index.values])
+        test_scaled = pd.DataFrame(scaler.transform(test), columns=test.columns.values).set_index([test.index.values])
+        return scaler, train_scaled, validate_scaled, test_scaled
+
+# Linear scaler
+def min_max_scaler(train,validate, test):
+    scaler = MinMaxScaler().fit(test)
+    scaler, train_scaled, validate_scaled, test_scaled = return_values(scaler, train, validate, test)
+    return scaler, train_scaled, validate_scaled, test_scaled
+
+def drop_features(train, validate, test):
+    # Drop features
+    features_to_drop = ["churn", "streaming_tv", "streaming_movies", "partner", "dependents", "online_security", "online_backup",  "is_churn", "customer_id", "gender", "contract_type", "payment_type", "internet_service_type"]
+
+    X_train = train.drop(columns= features_to_drop)
+    X_validate = validate.drop(columns=features_to_drop)
+    X_test = test.drop(columns=features_to_drop)
+    return X_train, X_validate, X_test
+
+def replace_scaled_values(df, df_scaled):
+    for i in range(0,4):
+        feature = df_scaled.columns[i]
+        df[feature] = df_scaled[feature]
+    return df
+
+
+def prep_for_modeling(train, validate, test):
+    X_train, X_validate, X_test = drop_features(train, validate, test)
+
+    features_to_scale = ["monthly_charges", "total_charges", "tenure", "tenure_years"]
+
+    X_train_scale = X_train[features_to_scale]
+    X_validate_scale = X_validate[features_to_scale]
+    X_test_scale = X_test[features_to_scale]
+
+    _, X_train_scaled,X_validate_scaled, X_test_scaled = min_max_scaler(X_train_scale, X_validate_scale, X_test_scale)
+
+    X_train = replace_scaled_values(X_train, X_train_scaled)
+    X_validate = replace_scaled_values(X_validate, X_validate_scaled)
+    X_test = replace_scaled_values(X_test, X_test_scaled)
+
+    return X_train, X_validate, X_test
+
+def full_prep_for_modeling(df):
+    # We prepare the data by adding missing values
+    df = prep_data(df)
+    # We encode new columns
+    df = encode_new_columns(df)
+    # We split the data
+    train, validate, test = split_data(df)
+    # Drop features we ahve determined are not useful
+    X_train, X_validate, X_test = drop_features(train, validate, test)
+    
+    # select features that we need to scale
+    features_to_scale = ["monthly_charges", "total_charges", "tenure", "tenure_years"]
+
+    X_train_scale = X_train[features_to_scale]
+    X_validate_scale = X_validate[features_to_scale]
+    X_test_scale = X_test[features_to_scale]
+
+    # scale features
+    _, X_train_scaled,X_validate_scaled, X_test_scaled = min_max_scaler(X_train_scale, X_validate_scale, X_test_scale)
+
+    # replaced features with scaled features
+    X_train = replace_scaled_values(X_train, X_train_scaled)
+    X_validate = replace_scaled_values(X_validate, X_validate_scaled)
+    X_test = replace_scaled_values(X_test, X_test_scaled)
+
+    return X_train, X_validate, X_test
 
