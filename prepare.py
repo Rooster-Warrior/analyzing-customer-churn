@@ -14,6 +14,9 @@ def create_tenure_year(df):
     df["tenure_years"] = df.tenure/12
     df.tenure_years = df.tenure_years.astype(int)
     return df
+def is_churn(df):
+    df['is_churn'] = (df.churn == "Yes")
+    return df
 
 # We had two options to deal with categorical data that had a n/a result (no phone service or no internet service), we chose to encode this as a seperate option (value=2) rather than lump in with other negative i.e. "No" values.
 #  This could have implications when we are modeling because there is no value relationship between the integers used (e.g. 2 is not more than 1)
@@ -38,6 +41,7 @@ def encode_all(df):
 def prep_data(df):
     df = replace_missing_values(df)
     df = create_tenure_year(df)
+    df = is_churn(df)
     df = encode_all(df)
     return df
 
@@ -98,7 +102,10 @@ def online_features(df):
         return 3
 
 def encode_new_columns(df):
-    df = online_features(df)
-    df = streaming_features(df)
-    df = (partner_dependents(df))
+    df["partner_dependents"] = df.apply(lambda row: partner_dependents(row), axis = 1)
+
+    df["streaming_features"] = df.apply(lambda row: streaming_features(row), axis = 1)
+
+    df["online_features"] = df.apply(lambda row: online_features(row), axis = 1)
     return df
+
