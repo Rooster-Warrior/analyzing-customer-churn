@@ -35,6 +35,12 @@ def encode_all(df):
             df[c] = df[c].astype(int)
     return df
 
+def prep_data(df):
+    df = replace_missing_values(df)
+    df = create_tenure_year(df)
+    df = encode_all(df)
+    return df
+
 #---------------------#
 #       Splitting     #
 #---------------------#
