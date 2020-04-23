@@ -1,27 +1,36 @@
-from env import password, user, host, url
+from env import password, user, host
 import pandas as pd
+import numpy as np
+import os
 
+query = '''
 
+SELECT * 
+FROM customers
+JOIN contract_types USING (contract_type_id)
+JOIN payment_types USING (payment_type_id)
+JOIN internet_service_types USING (internet_service_type_id);
 
+'''
 
-def sql_database(query, data_base_name, host=host, user=user, password=password):
-    query = '''
+data_base_name = "telco_churn"
 
-    SELECT * 
-    FROM customers
-    JOIN contract_types USING (contract_type_id)
-    JOIN payment_types USING (payment_type_id)
-    JOIN internet_service_types USING (internet_service_type_id);
-
-    '''
-
-    data_base_name = "telco_churn"
+def sql_database(host=host, user=user, password=password):
+    global query
+    global data_base_name
 
     url = f'mysql+pymysql://{user}:{password}@{host}/{data_base_name}'
     df = pd.read_sql(query, url)
     return df
 
-def prep_data(df):
-    df.total_charges = df.total_charges.replace(" ", df.tenure*df.monthly_charges)
-    df.total_charges = df.total_charges.astype(float)
-    return df
+def pull_csv_file():
+    global data_base_name
+    global query
+    url = f'mysql+pymysql://{user}:{password}@{host}/{data_base_name}'
+    plain_data = pd.read_sql(query, url)
+    plain_data.to_csv("telco_churn_data.csv")
+    
+
+def check_for_csv_file(file_name):
+    if os.path.exists(file_name) == False:
+        pull_csv_file()
