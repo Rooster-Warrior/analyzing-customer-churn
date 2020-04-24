@@ -14,6 +14,9 @@ from sklearn.neighbors import KNeighborsClassifier
 # Decision Tree
 
 def run_clf(X_train, y_train, max_depth):
+    '''
+    Function used to create and fit decision tree models. It requires a max_depth parameter. Returns model and predictions.
+    '''
     clf = DecisionTreeClassifier(criterion='entropy', max_depth=max_depth, random_state=123)
     clf.fit(X_train, y_train)
     y_pred = clf.predict(X_train)
@@ -23,6 +26,9 @@ def run_clf(X_train, y_train, max_depth):
 # KNN
 
 def run_knn(X_train, y_train, n_neighbors):
+    '''
+    Function used to create and fit KNN model. Requires to specify n_neighbors. Returns model and predictions.
+    '''
     knn = KNeighborsClassifier(n_neighbors=n_neighbors, weights='uniform')
     knn.fit(X_train, y_train)
     y_pred = knn.predict(X_train)
@@ -31,6 +37,19 @@ def run_knn(X_train, y_train, n_neighbors):
 # Random_forest
 
 def run_rf(X_train, y_train, leaf, max_depth):
+    ''' 
+    Function used to create and fit random forest models. Requires to specif leaf and max_depth. Returns model and predictions.
+    '''
     rf = RandomForestClassifier(random_state= 123, min_samples_leaf = leaf, max_depth = max_depth).fit(X_train, y_train)
     y_pred = rf.predict(X_train)
     return rf, y_pred
+
+# Logistic Regression
+
+def run_lg(X_train, y_train):
+    '''
+    Function used to create and fit logistic regression models. Returns model and predictions.
+    '''
+    logit = LogisticRegression().fit(X_train, y_train)
+    y_pred = logit.predict(X_train)
+    return logit, y_pred
