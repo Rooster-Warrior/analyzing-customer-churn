@@ -159,7 +159,7 @@ def drop_features(train, validate, test):
     Helper function used to define variables to drop, and apply them to our train, valdiate, and test datasets
     '''
     # Drop features
-    features_to_drop = ["churn", "streaming_tv", "streaming_movies", "partner", "dependents", "online_security", "online_backup",  "is_churn", "customer_id", "gender", "contract_type", "payment_type", "internet_service_type"]
+    features_to_drop = ["online_features", "churn", "streaming_tv", "streaming_movies", "partner", "dependents", "online_security", "online_backup",  "is_churn", "customer_id", "gender", "contract_type", "payment_type", "internet_service_type"]
 
     X_train = train.drop(columns= features_to_drop)
     X_validate = validate.drop(columns=features_to_drop)
@@ -264,7 +264,7 @@ def full_prep_for_modeling_encoded(df):
     train, validate, test = ohe("internet_service_type", train, validate, test)
     
     # Drop features
-    features_to_drop = ["internet_service_type_id","internet_service_type","contract_type", "payment_type","partner_dependents","tech_support","streaming_features", "multiple_lines","senior_citizen","device_protection", "phone_service","tenure_years", "total_charges", "churn", "streaming_tv", "streaming_movies", "partner", "dependents", "online_security", "online_backup",  "is_churn", "customer_id", "gender", "contract_type_id", "payment_type_id"]
+    features_to_drop = ["online_features", "internet_service_type_id","internet_service_type","contract_type", "payment_type","partner_dependents","tech_support", "multiple_lines","senior_citizen","device_protection", "phone_service","tenure_years", "total_charges", "churn", "streaming_tv", "streaming_movies", "partner", "dependents", "online_security", "online_backup",  "is_churn", "customer_id", "gender", "contract_type_id", "payment_type_id"]
 
     X_train = train.drop(columns= features_to_drop)
     X_validate = validate.drop(columns=features_to_drop)
