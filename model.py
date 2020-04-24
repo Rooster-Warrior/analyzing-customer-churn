@@ -1,3 +1,4 @@
+import pandas as pd 
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
@@ -53,3 +54,15 @@ def run_lg(X_train, y_train):
     logit = LogisticRegression().fit(X_train, y_train)
     y_pred = logit.predict(X_train)
     return logit, y_pred
+
+def accuracy_report(model, y_pred, y_train):
+
+    report = classification_report(y_train, y_pred, output_dict = True)
+    report = pd.DataFrame.from_dict(report)
+    accuracy_score = 'Accuracy on training set: {:.2f}'.format(report.accuracy[0])
+
+    labels = sorted(y_train.unique())
+    matrix = pd.DataFrame(confusion_matrix(y_train, y_pred), index = labels, columns = labels)
+
+    return accuracy_score, matrix, report
+    
