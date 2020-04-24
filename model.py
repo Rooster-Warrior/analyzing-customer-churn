@@ -55,8 +55,19 @@ def run_lg(X_train, y_train):
     y_pred = logit.predict(X_train)
     return logit, y_pred
 
-def accuracy_report(model, y_pred, y_train):
+def create_report(y_train, y_pred):
+    '''
+    Helper function used to create a classification evaluation report, and return it as df
+    '''
+    report = classification_report(y_train, y_pred, output_dict = True)
+    report = pd.DataFrame.from_dict(report)
+    return report
 
+
+def accuracy_report(model, y_pred, y_train):
+    '''
+    Main function used to create printable versions of the classification accuracy score, confusion matrix and classification report.
+    '''
     report = classification_report(y_train, y_pred, output_dict = True)
     report = pd.DataFrame.from_dict(report)
     accuracy_score = 'Accuracy on training set: {:.2f}'.format(report.accuracy[0])
