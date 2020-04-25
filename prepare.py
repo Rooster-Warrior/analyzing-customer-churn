@@ -64,7 +64,7 @@ def split_data(df):
     '''
     Main function to split data into train, validate, and test datasets. Random_state == 123, train_size = .8
     '''
-    train, test = train_test_split(df, random_state = 123, train_size=.8)
+    train, test = train_test_split(df, random_state =123, train_size=.8)
     train, validate = train_test_split(train, random_state=123, train_size=.75)
     return train, validate, test
 
@@ -264,7 +264,7 @@ def full_prep_for_modeling_encoded(df):
     train, validate, test = ohe("internet_service_type", train, validate, test)
     
     # Drop features
-    features_to_drop = ["online_features", "internet_service_type_id","internet_service_type","contract_type", "payment_type","partner_dependents","tech_support", "multiple_lines","senior_citizen","device_protection", "phone_service","tenure_years", "total_charges", "churn", "streaming_tv", "streaming_movies", "partner", "dependents", "online_security", "online_backup",  "is_churn", "customer_id", "gender", "contract_type_id", "payment_type_id"]
+    features_to_drop = ["internet_service_type_id","internet_service_type","contract_type", "payment_type","tech_support", "device_protection", "phone_service","tenure_years", "total_charges", "churn", "streaming_tv", "streaming_movies", "partner", "dependents", "online_security", "online_backup",  "is_churn", "customer_id", "gender", "contract_type_id", "payment_type_id"]
 
     X_train = train.drop(columns= features_to_drop)
     X_validate = validate.drop(columns=features_to_drop)
