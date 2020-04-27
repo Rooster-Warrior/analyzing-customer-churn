@@ -235,13 +235,13 @@ def ohe(col, X_train, X_validate, X_test):
     
     # Transforms and replaced the new columns back to the dataframes
     m = encoder.transform(X_train[[col]]).todense()
-    X_train = pd.concat([X_train, pd.DataFrame(m, columns=encoder.categories_[0], index=X_train.index)], axis = 1)
+    X_train = pd.concat([X_train, pd.DataFrame(m, columns= col + encoder.categories_[0], index=X_train.index)], axis = 1)
     
     m = encoder. transform(X_validate[[col]]).todense()
-    X_validate = pd.concat([X_validate, pd.DataFrame(m, columns=encoder.categories_[0], index = X_validate.index)], axis = 1)
+    X_validate = pd.concat([X_validate, pd.DataFrame(m, columns=col + encoder.categories_[0], index = X_validate.index)], axis = 1)
     
     m = encoder. transform(X_test[[col]]).todense()
-    X_test = pd.concat([X_test, pd.DataFrame(m, columns=encoder.categories_[0], index = X_test.index)], axis = 1)
+    X_test = pd.concat([X_test, pd.DataFrame(m, columns=col + encoder.categories_[0], index = X_test.index)], axis = 1)
     
     return X_train, X_validate, X_test
 
