@@ -263,11 +263,8 @@ def full_prep_for_modeling_encoded(df):
     train, validate, test = ohe("contract_type", train, validate, test)
     train, validate, test = ohe("internet_service_type", train, validate, test)
     
-    
-
-
     # Drop features
-    features_to_drop = ["internet_service_type_id","internet_service_type","contract_type", "payment_type","tech_support", "device_protection", "phone_service","tenure_years", "churn", "streaming_tv", "streaming_movies", "partner", "dependents", "online_security", "online_backup",  "is_churn", "customer_id", "gender", "contract_type_id", "payment_type_id"]
+    features_to_drop = ["total_charges", "internet_service_type_id","internet_service_type","contract_type", "payment_type","tech_support", "device_protection", "phone_service","tenure_years", "churn", "streaming_tv", "streaming_movies", "partner", "dependents", "online_security", "online_backup",  "is_churn", "customer_id", "gender", "contract_type_id", "payment_type_id"]
 
     X_train = train.drop(columns= features_to_drop)
     X_validate = validate.drop(columns=features_to_drop)
@@ -291,3 +288,75 @@ def full_prep_for_modeling_encoded(df):
 
     
     return X_train, X_validate, X_test
+
+
+
+# ------------------ #
+#      CSV File      # 
+# ------------------ # 
+
+def ohe_csv(col, df):
+    ''' 
+    Function to fit and transform a OneHotEncoder to encode columns and replace the new values in our train, validate, and test df
+    '''
+    # Creates and fits that encoder
+    encoder = OneHotEncoder().fit(df[[col]])
+    
+    # Transforms and replaced the new columns back to the dataframes
+    m = encoder.transform(df[[col]]).todense()
+    df = pd.concat([df, pd.DataFrame(m, columns= col + "_" + encoder.categories_[0], index=df.index)], axis = 1)
+    return df
+    
+def return_values_csv(scaler, df):
+    '''
+    Helper function used to updated the scaled arrays and transform them into usable dataframes
+    '''
+    df_scaled = pd.DataFrame(scaler.transform(df), columns=df.columns.values).set_index([df.index.values])
+    return scaler, df_scaled
+
+# Linear scaler
+def min_max_scaler_csv(df):
+    '''
+    Helper function that scales that data. Returns scaler, as well as the scaled dataframes
+    '''
+    scaler = MinMaxScaler().fit(df)
+    scaler, df_scaled = return_values_csv(scaler, df)
+    return scaler, df_scaled
+
+def replace_scaled_values_csv(df, df_scaled):
+    ''' 
+    Helper function used to replaced the scaled values back into the dataframes
+    '''
+    for i in range(0,2):
+        feature = df_scaled.columns[i]
+        df[feature] = df_scaled[feature]
+    return df
+
+def full_prep_for_csv(df):
+    # We prepare the data by adding missing values
+    df = prep_data(df)
+    # We encode new columns
+    df = encode_new_columns(df)
+    # We split the data
+    
+    # Encode Features
+    df = ohe_csv("payment_type", df)
+    df = ohe_csv("contract_type", df)
+    df = ohe_csv("internet_service_type", df)
+
+    # Drop features
+    features_to_drop = ["total_charges","internet_service_type_id","internet_service_type","contract_type", "payment_type","tech_support", "device_protection", "phone_service","tenure_years", "churn", "streaming_tv", "streaming_movies", "partner", "dependents", "online_security", "online_backup",  "is_churn", "customer_id", "gender", "contract_type_id", "payment_type_id"]
+    df = df.drop(columns=features_to_drop)
+
+    # select features that we need to scale
+    features_to_scale = ["monthly_charges", "tenure"]
+
+    df_scale = df[features_to_scale]
+
+    # scale features
+    _, df_scaled = min_max_scaler_csv(df_scale)
+
+    # replaced features with scaled features
+    df_scaled = replace_scaled_values(df, df_scaled)
+   
+    return df_scaled
