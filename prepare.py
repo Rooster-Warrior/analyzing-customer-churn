@@ -1,6 +1,9 @@
 import pandas as pd 
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder, MinMaxScaler
 from sklearn.model_selection import train_test_split
+import os
+import acquire
+import model
 
 # ----------------------- #
 #       Data Prep         #
@@ -131,10 +134,13 @@ def encode_new_columns(df):
 # ---------------------- #
 
 
-def split_my_df(df):
-    train, test = train_test_split(df, train_size=.8, random_state=123)
-    return train, test
-
+def create_target_dataframes(telco):
+    train, validate, test = split_data(telco)
+    y_train = train["churn"]
+    y_validate = validate["churn"]
+    y_test = test["churn"]
+    
+    return y_train, y_validate, y_test
 
 def return_values(scaler, train, validate, test):
     '''
@@ -360,3 +366,43 @@ def full_prep_for_csv(df):
     df_scaled = replace_scaled_values(df, df_scaled)
    
     return df_scaled
+
+# ------------------------ #
+#   Generate CSV Report    #
+# ------------------------ #
+
+def create_csv_df():
+    # Read data
+    telco = acquire.read_telco_data()
+    # Create splits
+    X_train, _, _ = full_prep_for_modeling_encoded(telco)
+    y_train, _, _ = create_target_dataframes(telco)
+    telco_scaled = full_prep_for_csv(telco)
+    
+    # fit the model using train df
+    rf, _ = model.run_rf(X_train, y_train, 1, 8)
+    
+    # Set a manual threshold for probability of churn
+    threshold = 0.4
+
+    predicted_proba = rf.predict_proba(telco_scaled)
+    predicted = (predicted_proba [:,1] >= threshold).astype('int')
+    
+    csv_df = pd.DataFrame({"customer_id": telco.customer_id, "probability_of_churn":predicted_proba[:,1], "prediction_of_churn": predicted})
+    
+    return csv_df
+
+def create_csv_report():
+    '''
+    Function creates the report as a DF and then creates a csv file in the current directory
+    '''
+    csv_df = create_csv_df()
+    csv_df.to_csv("telco_customer_churn_predictions.csv")
+
+def check_for_csv_report(file_name):
+    '''
+    Checks if there is a csv file with the matching name in the directory. If there isn't 
+    it will create a new csv using the env file in the directory. 
+    '''
+    if os.path.exists(file_name) == False:
+        create_csv_report()
