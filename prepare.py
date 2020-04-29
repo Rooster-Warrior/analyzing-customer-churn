@@ -53,6 +53,10 @@ def encode_all(df):
     return df
 
 def prep_data(df):
+    '''
+    Main function used to prepare the data before splitting. It fills missing values, creates a new column looking at tenure in years, and encodes existing 
+    binary columns into digits
+    '''
     df = replace_missing_values(df)
     df = create_tenure_year(df)
     df = is_churn(df)
@@ -339,6 +343,9 @@ def replace_scaled_values_csv(df, df_scaled):
     return df
 
 def full_prep_for_csv(df):
+    '''
+    Helper function to prepare the data for modeling
+    '''
     # We prepare the data by adding missing values
     df = prep_data(df)
     # We encode new columns
@@ -372,6 +379,10 @@ def full_prep_for_csv(df):
 # ------------------------ #
 
 def create_csv_df():
+    '''
+    Function that acquires the data, and then scales and encodes the relevant columns.
+    It then creates a new df, joining the customer id, the probability of churn, and the predicted value
+    '''
     # Read data
     telco = acquire.read_telco_data()
     # Create splits
