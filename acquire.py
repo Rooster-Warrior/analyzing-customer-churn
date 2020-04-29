@@ -52,3 +52,6 @@ def read_telco_data():
     df = pd.read_csv("telco_churn_data.csv")
     df = df.drop(columns="Unnamed: 0")
     return df
+
+
+
