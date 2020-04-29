@@ -39,6 +39,10 @@ Recommendations:
 - It may be worth seeing if we can improve the accuracy and recall of our model by using only month-to-month customers in data set. 
 - If all else fails, offer discounts and credits to customers who remain with company for a year
 
+## Presentation
+
+* For a summary of the report, the presentation can be found here: https://docs.google.com/presentation/d/1J1z_o-xpbxqXs__86TIjyEPspQRH16XgLPKIu-0OdGc/edit?usp=sharing
+
 ## Requirements
 
 In order to access the report, it is necesary to have a `env.py` file with  variables called:
