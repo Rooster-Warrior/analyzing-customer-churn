@@ -417,3 +417,43 @@ def check_for_csv_report(file_name):
     '''
     if os.path.exists(file_name) == False:
         create_csv_report()
+
+# ------------------------ #
+#   Create report with     #
+#       new data           #
+# ------------------------ #
+
+def create_csv_df_new_data():
+    '''
+    Function that acquires the data, and then scales and encodes the relevant columns.
+    It then creates a new df, joining the customer id, the probability of churn, and the predicted value. It takes the df, without any prep.
+    '''
+    
+    # Pull data from SQL database and save it as a CSV, then read the CSV
+    acquire.pull_csv_file()
+    df = acquire.read_telco_data()
+
+    # Create splits
+    X_train, _, _ = full_prep_for_modeling_encoded(df)
+    y_train, _, _ = create_target_dataframes(df)
+    telco_scaled = full_prep_for_csv(df)
+    
+    # fit the model using train df
+    rf, _ = model.run_rf(X_train, y_train, 1, 8)
+    
+    # Set a manual threshold for probability of churn
+    threshold = 0.4
+
+    predicted_proba = rf.predict_proba(telco_scaled)
+    predicted = (predicted_proba [:,1] >= threshold).astype('int')
+    
+    csv_df = pd.DataFrame({"customer_id": df.customer_id, "probability_of_churn":predicted_proba[:,1], "prediction_of_churn": predicted})
+    
+    return csv_df
+
+def create_csv_report_new_data():
+    '''
+    Function creates the report as a DF and then creates a csv file in the current directory
+    '''
+    csv_df = create_csv_df_new_data()
+    csv_df.to_csv("telco_customer_churn_predictions.csv")
