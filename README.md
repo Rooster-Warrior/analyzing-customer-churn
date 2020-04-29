@@ -30,7 +30,13 @@ In order to access the report, it is necesary to have a `env.py` file with  vari
 
 The py files and the notebook will automatically pull the data, and create a csv file with all the data for easier access. All of the functions used in the report can be found in the relevant py files in this repo. 
 
+### To create a new CSV report with new data:
+
+* Use the `create_csv_report_new_data` function in the model.py file. The function will use the credentials in the env.py file to pull the new data from the SQL database, and create a local CSV file. 
+    * The function will then prepare the data for modeling by filling missing values, dropping unwanted columns, scaling the numerical features, and encoding the categorical features. The model will be run, using the same hyperparameters as used on the report, and store the desired featuers in a CSV file.
+
 ## Further Improvements
+* Additional information, in the form of a binary column, on whether the customer churn because they were relocating, or because they had a negative product or customer experience. If we can remove these outliers, we can then make the model far more accurate at predicting customers that will churn based on price. 
 
 ## Data dictionary: 
 
