@@ -19,6 +19,25 @@ In order to answer this question - we looked to answer these more concrete quest
 ### 2. To use classification models to predict customers that would be at risk of churning, and offering insights to help the company prevent further churning.
 
 ## Executive Summary
+The data science team was asked by senior management to analyze customer churn.   The overall goal of this project was to examine if identifying churned customers is a potential revenue source, and if it is what is the most effective way to predict which customers are likely to churn.  
+
+The data was supplied from subscription data acquired by customer sign ups from 'telco_churn' database on Codeup SQL Server.  Using 7043 customer entries, we built reproducible functions to acquire, prepare, explore and model customer data.  The results can be found in "telco_customer_churn_predictions.csv" on the company google classroom server.
+
+An exploration of features important to predicting churn were two continuous variables: tenure and monthly charges.   The categorical features that affected customer churn are contract type, internet service type, and online features (a derived column of whether the customer used online back up and online payments).   Dependents and partner were two features that had a high variance in churned compared to retained customers, but they did not factor greatly in the predictive models.  Interestingly there is a clear distinction in pricing differences between retained and churned customers with an $20 a month per customer difference on average.  
+
+Using Random Forest, an advanced decision tree modeling algorithm, we were able to predict customer churn with an 80% success rate.  Due to the high cost of acquisition of new customers we recommend focussing on reducing the occurrences of losing a customer who we have not labelled as a potential churn.  
+
+There is a clear business case for focussing on reducing customer churn.  We recommend focussing on month-to-month customers and trying to grow them into contracted customers.  This can be achieved in two different ways: education through marketing, or redefinition of contract types.  The education would focus on highlighting benefits of company products and services.  Consequently, converting all month-to-month contracts into yearly contracts with a cancel anytime option may provide a psychological bump.  Since most customers churn within the first 6 months, a value add of premium features for the first 6 months may also have the desired results.  
+
+Recommendations:
+
+- Follow up calls and marketing materials sent to newly acquired month-to-month customers
+- Change all month-to-month customers to contract with no cancellation fee
+- Offer value add services for new month-to-month customers to reduce cancellations
+- Push internet services on phone only customers
+- Push fiber optic service on DSL customers
+- It may be worth seeing if we can improve the accuracy and recall of our model by using only month-to-month customers in data set. 
+- If all else fails, offer discounts and credits to customers who remain with company for a year
 
 ## Requirements
 
