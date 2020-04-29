@@ -70,7 +70,7 @@ def accuracy_report(model, y_pred, y_train):
     '''
     report = classification_report(y_train, y_pred, output_dict = True)
     report = pd.DataFrame.from_dict(report)
-    accuracy_score = f'Accuracy on {y_train} set: {:.2f}'.format(report.accuracy[0])
+    accuracy_score = f'Accuracy on dataset: {report.accuracy[0]:.2f}'
 
     labels = sorted(y_train.unique())
     matrix = pd.DataFrame(confusion_matrix(y_train, y_pred), index = labels, columns = labels)
